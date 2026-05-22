@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "seed:admin": "tsx prisma/seeds/admin.ts",
-    "test": "vitest",
+    "postinstall": "prisma generate",
+    "test": "vitest run",
     "test:unit": "vitest src/tests/unit",
     "test:e2e": "vitest src/tests/e2e",
     "test:integration": "vitest src/tests/integration"
