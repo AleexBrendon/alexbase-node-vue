@@ -9,12 +9,14 @@
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
     "seed:admin": "tsx prisma/seeds/admin.ts",
     "postinstall": "prisma generate",
     "test": "vitest run",
-    "test:unit": "vitest src/tests/unit",
-    "test:e2e": "vitest src/tests/e2e",
-    "test:integration": "vitest src/tests/integration"
+    "test:watch": "vitest",
+    "test:unit": "vitest run src/tests/unit",
+    "test:e2e": "vitest run src/tests/e2e",
+    "test:integration": "vitest run src/tests/integration"
   },
   "keywords": [],
   "author": "",
