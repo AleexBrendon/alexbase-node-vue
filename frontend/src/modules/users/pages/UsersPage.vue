@@ -13,6 +13,7 @@ import AppEmptyState from "../../../shared/components/ui/AppEmptyState.vue";
 import UserFormModal from "../components/UserFormModal.vue";
 import { useToastStore } from "../../../shared/stores/toast.store";
 import AppConfirmModal from "../../../shared/components/ui/AppConfirmModal.vue";
+import { getErrorMessage } from "../../../shared/utils/getErrorMessage";
 
 const users = ref<User[]>([]);
 const showCreateModal = ref(false);
@@ -59,9 +60,9 @@ async function loadUsers() {
 
     users.value = result.data;
     meta.value = result.meta;
-  } catch (error: any) {
+  } catch (error: unknown) {
     errorMessage.value =
-      error?.response?.data?.message || "Erro ao carregar usuários.";
+      getErrorMessage(error, "Erro ao carregar usuários.");
   } finally {
     loading.value = false;
   }
@@ -142,11 +143,10 @@ async function confirmDeleteUser() {
 
     userToDelete.value = null;
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     toast.error(
       "Erro ao excluir",
-      error?.response?.data?.message ||
-      "Não foi possível excluir o usuário."
+      getErrorMessage(error, "Não foi possível excluir o usuário.")
     );
   } finally {
     deleting.value = false;

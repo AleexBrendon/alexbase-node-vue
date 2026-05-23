@@ -5,6 +5,7 @@ import AppButton from "../../../shared/components/ui/AppButton.vue";
 import AppInput from "../../../shared/components/ui/AppInput.vue";
 
 import { createUser, updateUser } from "../services/users.service";
+import { getErrorMessage } from "../../../shared/utils/getErrorMessage";
 import type { CreateUserPayload, User } from "../types/user.type";
 
 const props = defineProps<{
@@ -54,9 +55,9 @@ async function handleSubmit() {
 
     emit("created", user);
     emit("close");
-  } catch (error: any) {
+  } catch (error: unknown) {
     errorMessage.value =
-      error?.response?.data?.message || "Erro ao salvar usuário.";
+      getErrorMessage(error, "Erro ao salvar usuário.");
   } finally {
     loading.value = false;
   }

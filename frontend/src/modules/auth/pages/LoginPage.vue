@@ -2,7 +2,7 @@
 import { reactive, ref } from "vue";
 import { useRouter, RouterLink } from "vue-router";
 import { useAuthStore } from "../stores/auth.store";
-
+import { getErrorMessage } from "../../../shared/utils/getErrorMessage";
 import AppButton from "../../../shared/components/ui/AppButton.vue";
 import AppInput from "../../../shared/components/ui/AppInput.vue";
 import { useToastStore } from "../../../shared/stores/toast.store";
@@ -30,9 +30,9 @@ async function handleSubmit() {
     );
 
     router.push("/dashboard");
-  } catch (error: any) {
+  } catch (error: unknown) {
     const message =
-      error?.response?.data?.message || "Credenciais inválidas.";
+      getErrorMessage(error, "Credenciais inválidas.");
 
     errorMessage.value = message;
 
