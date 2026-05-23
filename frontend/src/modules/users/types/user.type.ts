@@ -1,19 +1,19 @@
-export type UserResponseDTO = {
+export type User = {
   id: string;
   name: string;
   email: string;
-  createdAt: Date;
-  updatedAt: Date;
+  role: string;
+  createdAt: string;
 };
 
-export type CreateUserDTO = {
+export type CreateUserPayload = {
   name: string;
   email: string;
   password: string;
   role: string;
 };
 
-export type UpdateUserDTO = {
+export type UpdateUserPayload = {
   name?: string;
   email?: string;
   password?: string;

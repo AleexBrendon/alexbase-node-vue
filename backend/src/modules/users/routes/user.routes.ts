@@ -48,3 +48,24 @@ userRoutes.get(
   roleMiddleware([ROLES.ADMIN]),
   userController.index
 );
+
+userRoutes.post(
+  "/",
+  authMiddleware,
+  roleMiddleware([ROLES.ADMIN]),
+  userController.create
+);
+
+userRoutes.patch(
+  "/:id",
+  authMiddleware,
+  roleMiddleware([ROLES.ADMIN]),
+  userController.update
+);
+
+userRoutes.delete(
+  "/:id",
+  authMiddleware,
+  roleMiddleware([ROLES.ADMIN]),
+  userController.delete
+);
