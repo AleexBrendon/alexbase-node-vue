@@ -12,11 +12,3 @@ export type UpdateProfilePayload = {
   email?: string;
   password?: string;
 };
-
-type Actor = {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  companyId: string;
-};

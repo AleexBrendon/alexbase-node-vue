@@ -1,11 +1,20 @@
 import { mount } from "@vue/test-utils";
-import { describe, expect, it, vi } from "vitest";
 import { createTestingPinia } from "@pinia/testing";
+import { describe, expect, it, vi } from "vitest";
 
 import Users from "../../modules/users/pages/UsersPage.vue";
 
+type UsersMockResponse = {
+  data: unknown[];
+  meta: {
+    page: number;
+    totalPages: number;
+    total: number;
+  };
+};
+
 vi.mock("../../modules/users/services/users.service", () => ({
-  getUsers: vi.fn().mockResolvedValue({
+  getUsers: vi.fn<() => Promise<UsersMockResponse>>().mockResolvedValue({
     data: [],
     meta: {
       page: 1,
@@ -24,7 +33,6 @@ describe("Users", () => {
             createSpy: vi.fn,
           }),
         ],
-
         stubs: {
           AppCard: true,
           AppButton: true,
