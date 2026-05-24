@@ -3,17 +3,19 @@ import jwt from "jsonwebtoken";
 import { authConfig } from "../../config/auth.js";
 
 export function generateToken(
-  id: string,
-  role: string
+  userId: string,
+  role: string,
+  companyId: string
 ) {
   return jwt.sign(
     {
-      sub: id,
       role,
+      companyId,
     },
-    authConfig.jwt.secret as jwt.Secret,
+    authConfig.jwt.secret,
     {
+      subject: userId,
       expiresIn: authConfig.jwt.expiresIn,
-    } as jwt.SignOptions
+    }
   );
 }

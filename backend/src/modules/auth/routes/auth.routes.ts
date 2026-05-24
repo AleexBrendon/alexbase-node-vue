@@ -1,6 +1,6 @@
 import { Router } from "express";
-
 import { AuthController } from "../controllers/AuthController.js";
+import { authRateLimit } from "../../../shared/middlewares/rateLimit.js";
 
 export const authRoutes = Router();
 
@@ -8,9 +8,9 @@ const authController = new AuthController();
 
 /**
  * @swagger
- * /auth/register:
+ * /auth/forgot-password:
  *   post:
- *     summary: Registrar usuário
+ *     summary: Solicitar recuperação de senha
  *     tags:
  *       - Auth
  *     requestBody:
@@ -20,22 +20,18 @@ const authController = new AuthController();
  *           schema:
  *             type: object
  *             properties:
- *               name:
- *                 type: string
  *               email:
  *                 type: string
- *               password:
- *                 type: string
  *     responses:
- *       201:
- *         description: Usuário criado
+ *       200:
+ *         description: Solicitação processada
  */
 
 /**
  * @swagger
- * /auth/login:
+ * /auth/reset-password:
  *   post:
- *     summary: Login usuário
+ *     summary: Redefinir senha
  *     tags:
  *       - Auth
  *     requestBody:
@@ -45,14 +41,40 @@ const authController = new AuthController();
  *           schema:
  *             type: object
  *             properties:
- *               email:
+ *               token:
  *                 type: string
  *               password:
  *                 type: string
  *     responses:
  *       200:
- *         description: Login realizado
+ *         description: Senha redefinida
  */
 
 authRoutes.post("/register", authController.register);
-authRoutes.post("/login", authController.login);
+
+authRoutes.post(
+  "/login",
+  authRateLimit,
+  authController.login
+);
+
+authRoutes.post(
+  "/refresh",
+  authController.refresh
+);
+
+authRoutes.post(
+  "/logout",
+  authController.logout
+);
+
+authRoutes.post(
+  "/forgot-password",
+  authRateLimit,
+  authController.forgotPassword
+);
+
+authRoutes.post(
+  "/reset-password",
+  authController.resetPassword
+);

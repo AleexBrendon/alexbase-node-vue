@@ -10,3 +10,23 @@ export const loginSchema = z.object({
   email: z.email("E-mail inválido."),
   password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres."),
 });
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1, "Refresh token é obrigatório"),
+});
+
+export const forgotPasswordSchema = z.object({
+  email: z.email("E-mail inválido."),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(
+    1,
+    "Token é obrigatório."
+  ),
+
+  password: z.string().min(
+    6,
+    "Senha deve ter no mínimo 6 caracteres."
+  ),
+});

@@ -26,7 +26,7 @@ const deleting = ref(false);
 const toast = useToastStore();
 
 const page = ref(1);
-const perPage = ref(10);
+const perPage = ref(5);
 const search = ref("");
 
 const meta = ref({
@@ -165,32 +165,32 @@ onMounted(() => {
 
 <template>
   <section class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 class="text-3xl font-bold text-slate-900">
+        <h1 class="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
           Usuários
         </h1>
 
-        <p class="mt-1 text-sm text-slate-500">
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Gerencie os usuários cadastrados na AlexBase.
         </p>
       </div>
 
-      <div class="flex gap-3">
-        <AppButton variant="secondary" @click="refreshUsers">
+      <div class="flex w-full gap-3 sm:w-auto">
+        <AppButton class="flex-1 sm:flex-none" variant="secondary" @click="refreshUsers">
           Atualizar
         </AppButton>
 
-        <AppButton @click="showCreateModal = true">
+        <AppButton class="flex-1 sm:flex-none" @click="showCreateModal = true">
           Novo usuário
         </AppButton>
       </div>
     </div>
 
     <AppCard class="p-0">
-      <div class="flex gap-3">
-        <input v-model="search" type="text" placeholder="Buscar por nome ou email..."
-          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
+      <div class="p-5">
+        <input v-model="search" type="text" placeholder="Buscar usuário..."
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 dark:border-white/10 dark:bg-slate-900"
           @keyup.enter="handleSearch" />
       </div>
 
@@ -211,74 +211,123 @@ onMounted(() => {
       <AppEmptyState v-else-if="users.length === 0" title="Nenhum usuário encontrado"
         description="Quando novos usuários forem cadastrados, eles aparecerão aqui." />
 
-      <div v-else class="overflow-x-auto">
-        <table class="w-full border-collapse">
-          <thead>
-            <tr class="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-              <th class="px-6 py-4">Usuário</th>
-              <th class="px-6 py-4">Email</th>
-              <th class="px-6 py-4">Role</th>
-              <th class="px-6 py-4">Criado em</th>
-              <th class="px-6 py-4 text-right">Ações</th>
-            </tr>
-          </thead>
+      <div v-else>
 
-          <tbody>
-            <tr v-for="user in users" :key="user.id" class="border-b border-slate-100 transition hover:bg-slate-50">
-              <td class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                  <div
-                    class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">
-                    {{ getInitials(user.name) }}
-                  </div>
+        <!-- MOBILE -->
+        <div class="space-y-3 p-4 md:hidden">
+          <div v-for="user in users" :key="user.id"
+            class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900">
+            <div class="flex gap-3">
+              <div
+                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-sm font-bold text-white">
+                {{ getInitials(user.name) }}
+              </div>
 
-                  <div>
-                    <p class="font-medium text-slate-900">
-                      {{ user.name }}
-                    </p>
+              <div class="min-w-0 flex-1">
+                <h3 class="truncate font-semibold">
+                  {{ user.name }}
+                </h3>
 
-                    <p class="text-xs text-slate-500">
-                      ID: {{ user.id }}
-                    </p>
+                <p class="break-all text-xs text-slate-500">
+                  {{ user.email }}
+                </p>
+
+                <p class="mt-1 text-[11px] text-slate-400 break-all">
+                  ID: {{ user.id }}
+                </p>
+
+                <div class="mt-3 flex items-center justify-between">
+                  <AppBadge :variant="roleVariant(user.role)">
+                    <Shield :size="13" />
+                    {{ user.role }}
+                  </AppBadge>
+
+                  <div class="flex gap-2">
+                    <button class="rounded-lg border border-slate-200 p-2" @click="openEditModal(user)">
+                      <Pencil :size="15" />
+                    </button>
+
+                    <button class="rounded-lg border border-red-200 p-2 text-red-600" @click="userToDelete = user">
+                      <Trash2 :size="15" />
+                    </button>
                   </div>
                 </div>
-              </td>
+              </div>
+            </div>
+          </div>
+        </div>
 
-              <td class="px-6 py-4 text-sm text-slate-600">
-                {{ user.email }}
-              </td>
+        <!-- DESKTOP -->
+        <div class="hidden overflow-x-auto md:block">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr
+                class="border-b border-slate-200 bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+                <th class="px-6 py-4">Usuário</th>
+                <th class="px-6 py-4">Email</th>
+                <th class="px-6 py-4">Role</th>
+                <th class="px-6 py-4">Criado em</th>
+                <th class="px-6 py-4 text-right">Ações</th>
+              </tr>
+            </thead>
 
-              <td class="px-6 py-4">
-                <AppBadge :variant="roleVariant(user.role)">
-                  <Shield :size="13" />
-                  {{ user.role }}
-                </AppBadge>
-              </td>
+            <tbody>
+              <tr v-for="user in users" :key="user.id" class="border-b border-slate-100 transition hover:bg-slate-50">
+                <td class="px-6 py-4">
+                  <div class="flex items-center gap-3">
+                    <div
+                      class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-sm font-bold text-white">
+                      {{ getInitials(user.name) }}
+                    </div>
 
-              <td class="px-6 py-4 text-sm text-slate-500">
-                {{
-                  user.createdAt
-                    ? new Date(user.createdAt).toLocaleDateString("pt-BR")
-                    : "-"
-                }}
-              </td>
+                    <div>
+                      <p class="font-medium text-slate-900">
+                        {{ user.name }}
+                      </p>
 
-              <td class="px-6 py-4">
-                <div class="flex justify-end gap-2">
-                  <button class="rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-100"
-                    @click="openEditModal(user)">
-                    <Pencil :size="16" />
-                  </button>
+                      <p class="text-xs text-slate-500">
+                        ID: {{ user.id }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
 
-                  <button class="rounded-lg border border-red-200 p-2 text-red-600 transition hover:bg-red-50"
-                    @click="userToDelete = user">
-                    <Trash2 :size="16" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <td class="px-6 py-4 text-sm text-slate-600">
+                  {{ user.email }}
+                </td>
+
+                <td class="px-6 py-4">
+                  <AppBadge :variant="roleVariant(user.role)">
+                    <Shield :size="13" />
+                    {{ user.role }}
+                  </AppBadge>
+                </td>
+
+                <td class="px-6 py-4 text-sm text-slate-500">
+                  {{
+                    user.createdAt
+                      ? new Date(user.createdAt).toLocaleDateString("pt-BR")
+                      : "-"
+                  }}
+                </td>
+
+                <td class="px-6 py-4">
+                  <div class="flex justify-end gap-2">
+                    <button class="rounded-lg border border-slate-200 p-2 text-slate-600 transition hover:bg-slate-100"
+                      @click="openEditModal(user)">
+                      <Pencil :size="16" />
+                    </button>
+
+                    <button class="rounded-lg border border-red-200 p-2 text-red-600 transition hover:bg-red-50"
+                      @click="userToDelete = user">
+                      <Trash2 :size="16" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div v-if="!loading && !errorMessage && users.length > 0"

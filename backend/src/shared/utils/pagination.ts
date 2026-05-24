@@ -3,7 +3,7 @@ import type { Request } from "express";
 export function getPaginationParams(request: Request) {
   const page = Math.max(Number(request.query.page) || 1, 1);
   const perPage = Math.min(
-    Math.max(Number(request.query.perPage) || 10, 1),
+    Math.max(Number(request.query.perPage) || 5, 1),
     100
   );
 

@@ -1,6 +1,9 @@
 import request from "supertest";
+import bcrypt from "bcryptjs";
+
 import { app } from "../../app.js";
-import { describe, it, expect } from "vitest";
+import { prisma } from "../../database/prisma.js";
+import { generateToken } from "../../shared/utils/generateToken.js";
 
 describe("Users E2E", () => {
   it("não deve listar usuários sem token", async () => {
@@ -10,24 +13,29 @@ describe("Users E2E", () => {
   });
 
   it("não deve listar usuários com token de user comum", async () => {
-    const email = `user-${Date.now()}@email.com`;
+    const company = await prisma.company.create({
+      data: {
+        name: "Empresa Teste",
+      },
+    });
 
-    await request(app)
-      .post("/auth/register")
-      .send({
-        name: "User Test",
-        email,
-        password: "123456",
-      });
+    const password = await bcrypt.hash("123456", 8);
 
-    const loginResponse = await request(app)
-      .post("/auth/login")
-      .send({
-        email,
-        password: "123456",
-      });
+    const user = await prisma.user.create({
+      data: {
+        name: "User Comum",
+        email: `user-comum-${Date.now()}@email.com`,
+        password,
+        role: "user",
+        companyId: company.id,
+      },
+    });
 
-    const token = loginResponse.body.data.token;
+    const token = generateToken(
+      user.id,
+      user.role,
+      user.companyId
+    );
 
     const response = await request(app)
       .get("/users")

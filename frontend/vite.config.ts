@@ -7,4 +7,9 @@ export default defineConfig({
     vue(),
     tailwindcss(),
   ],
+  test: {
+    globals: true,
+    environment: "jsdom",
+    setupFiles: "./src/tests/setup.ts",
+  },
 });

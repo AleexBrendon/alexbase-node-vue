@@ -53,7 +53,7 @@ export class UserRepository {
       total,
     };
   }
-  
+
   async findByEmail(email: string) {
     return prisma.user.findUnique({
       where: {
@@ -91,6 +91,7 @@ export class UserRepository {
 
   async update(
     id: string,
+    companyId: string,
     data: {
       name?: string;
       email?: string;
@@ -98,28 +99,39 @@ export class UserRepository {
       role?: string;
     }
   ) {
-    return prisma.user.update({
+    await prisma.user.updateMany({
       where: {
         id,
+        companyId,
       },
-
       data,
+    });
 
+    return prisma.user.findFirstOrThrow({
+      where: {
+        id,
+        companyId,
+      },
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
+        companyId: true,
         createdAt: true,
         updatedAt: true,
       },
     });
   }
 
-  async delete(id: string) {
-    return prisma.user.delete({
+  async delete(
+    id: string,
+    companyId: string
+  ) {
+    return prisma.user.deleteMany({
       where: {
         id,
+        companyId,
       },
     });
   }

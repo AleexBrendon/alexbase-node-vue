@@ -42,14 +42,16 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <form class="w-full max-w-md rounded-3xl border border-white/10 bg-white p-8 shadow-2xl"
-    @submit.prevent="handleSubmit">
+  <form
+    class="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl dark:border-white/10 dark:bg-slate-900 sm:p-8"
+    @submit.prevent="handleSubmit"
+  >
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-slate-900">
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
         Entrar
       </h1>
 
-      <p class="mt-2 text-sm text-slate-500">
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
         Acesse sua conta AlexBase.
       </p>
     </div>
@@ -63,14 +65,14 @@ async function handleSubmit() {
         {{ errorMessage }}
       </p>
 
-      <AppButton type="submit" class="w-full mt-4" :loading="auth.loading">
+      <AppButton type="submit" class="mt-4 w-full" :loading="auth.loading">
         {{ auth.loading ? "Entrando..." : "Entrar" }}
       </AppButton>
     </div>
 
-    <p class="mt-6 text-center text-sm text-slate-500">
+    <p class="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
       Ainda não tem conta?
-      <RouterLink to="/register" class="font-semibold text-slate-950">
+      <RouterLink to="/register" class="font-semibold text-slate-950 dark:text-white">
         Criar conta
       </RouterLink>
     </p>

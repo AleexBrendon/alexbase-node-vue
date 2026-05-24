@@ -14,14 +14,44 @@ export class AuthRepository {
     email: string;
     password: string;
   }) {
-    return prisma.user.create({
-      data,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        createdAt: true,
+    return prisma.$transaction(async (tx) => {
+      const company = await tx.company.create({
+        data: {
+          name: `${data.name} Company`,
+        },
+      });
+
+      const user = await tx.user.create({
+        data: {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+
+          role: "admin",
+          companyId: company.id,
+        },
+
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+          companyId: true,
+          createdAt: true,
+        },
+      });
+
+      return user;
+    });
+  }
+
+  async updatePassword(userId: string, password: string) {
+    return prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password,
       },
     });
   }

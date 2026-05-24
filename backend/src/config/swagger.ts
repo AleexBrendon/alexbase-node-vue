@@ -7,14 +7,12 @@ export const swaggerSpec = swaggerJSDoc({
     info: {
       title: "AlexBase API",
       version: "1.0.0",
-      description:
-        "Base API reutilizável com Node.js + Express + Prisma + PostgreSQL",
+      description: "Documentação da API AlexBase",
     },
 
     servers: [
       {
         url: "http://localhost:3000",
-        description: "Servidor Local",
       },
     ],
 
@@ -27,7 +25,15 @@ export const swaggerSpec = swaggerJSDoc({
         },
       },
     },
+
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
 
-  apis: ["./src/modules/**/*.ts"],
+  apis: [
+    "./src/modules/**/routes/*.ts"
+  ],
 });

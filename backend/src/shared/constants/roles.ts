@@ -1,4 +1,32 @@
+import { PERMISSIONS } from "./permissions.js";
+
 export const ROLES = {
   ADMIN: "admin",
   USER: "user",
 } as const;
+
+export type Role =
+  (typeof ROLES)[keyof typeof ROLES];
+
+export const ROLE_PERMISSIONS = {
+  [ROLES.ADMIN]: [
+    PERMISSIONS.USERS_READ,
+    PERMISSIONS.USERS_CREATE,
+    PERMISSIONS.USERS_UPDATE,
+    PERMISSIONS.USERS_DELETE,
+
+    PERMISSIONS.DASHBOARD_READ,
+
+    PERMISSIONS.ACTIVITIES_READ,
+
+    PERMISSIONS.PROFILE_READ,
+    PERMISSIONS.PROFILE_UPDATE,
+  ],
+
+  [ROLES.USER]: [
+    PERMISSIONS.DASHBOARD_READ,
+
+    PERMISSIONS.PROFILE_READ,
+    PERMISSIONS.PROFILE_UPDATE,
+  ],
+};

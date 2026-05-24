@@ -1,5 +1,16 @@
 export type DashboardData = {
-  users: number;
+  totalUsers: number;
   admins: number;
-  regularUsers: number;
+  users: number;
+  newUsersToday: number;
+
+  rolesChart: {
+    labels: string[];
+    series: number[];
+  };
+
+  usersByDayChart: {
+    labels: string[];
+    series: number[];
+  };
 };

@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-import { env } from "../../config/env.js";
+import { prisma } from "../../database/prisma.js";
 import { authConfig } from "../../config/auth.js";
 import { AppError } from "../errors/AppError.js";
 import { MESSAGES } from "../constants/messages.js";
@@ -9,9 +9,10 @@ import { MESSAGES } from "../constants/messages.js";
 type JwtPayload = {
   sub: string;
   role: string;
+  companyId: string;
 };
 
-export function authMiddleware(
+export async function authMiddleware(
   request: Request,
   _response: Response,
   next: NextFunction
@@ -40,13 +41,35 @@ export function authMiddleware(
       authConfig.jwt.secret
     ) as JwtPayload;
 
-    request.user = {
-      id: decoded.sub,
-      role: decoded.role,
-    };
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decoded.sub,
+      },
+
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        companyId: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError(
+        "Usuário não encontrado.",
+        401
+      );
+    }
+
+    request.user = user;
 
     return next();
-  } catch {
+  } catch (error) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+
     throw new AppError(
       MESSAGES.INVALID_TOKEN,
       401
